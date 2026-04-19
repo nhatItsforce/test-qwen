@@ -271,11 +271,34 @@
 
     <div class="loading" id="loading">
         <div class="spinner"></div>
-        <p>Loading Globe...</p>
+        <p id="loadingText">Loading Globe...</p>
+        <p id="errorMessage" style="color: #ff6b6b; margin-top: 10px; display: none;"></p>
     </div>
 
+    <!-- Try multiple CDN sources for Three.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script>
+        // Fallback if Three.js didn't load
+        if (typeof THREE === 'undefined') {
+            const script = document.createElement('script');
+            script.src = 'https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js';
+            script.onload = function() {
+                if (typeof THREE === 'undefined') {
+                    showLoadError();
+                } else {
+                    init();
+                }
+            };
+            script.onerror = showLoadError;
+            document.head.appendChild(script);
+        }
+
+        function showLoadError() {
+            document.getElementById('loadingText').textContent = 'Failed to load Three.js';
+            document.getElementById('errorMessage').style.display = 'block';
+            document.getElementById('errorMessage').textContent = 'Please check your internet connection or try again later.';
+        }
+
         // Country data with coordinates and information
         const countryData = {
             'US': { name: 'United States', region: 'North America', description: 'A diverse nation with vast landscapes, from bustling cities to natural wonders.', population: '331M', capital: 'Washington D.C.', coords: [40, -100] },
@@ -647,8 +670,10 @@
             renderer.render(scene, camera);
         }
 
-        // Initialize
-        init();
+        // Only initialize if Three.js is loaded
+        if (typeof THREE !== 'undefined') {
+            init();
+        }
     </script>
 </body>
 </html>
