@@ -453,7 +453,7 @@
                 positions[i + 2] = (Math.random() - 0.5) * 100;
             }
 
-            starGeometry.setAttribute('position', starGeometry.createBufferAttribute(positions, 3));
+            starGeometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
 
             const starMaterial = new THREE.PointsMaterial({
                 color: 0xffffff,
